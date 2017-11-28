@@ -2,6 +2,7 @@ const querystring = require('querystring');
 const got = require('got');
 const cheerio = require('cheerio');
 const meow = require('meow');
+const inquirer = require('inquirer');
 
 const ACM_SEARCH_URL = 'https://dl.acm.org/results.cfm';
 const ACM_REFERENCE_URL = 'https://dl.acm.org/exportformats.cfm';
@@ -49,9 +50,28 @@ const cli = meow(`
     $ bibtex-search <query>
 `);
 
+function buildQuestions(articles) {
+  const choices = articles.map(({ id, title, authors }, i) => ({
+    value: id,
+    name: `${title} (${authors})`
+  }));
+
+  return [
+    {
+      choices,
+      pageSize: articles.length,
+      type: 'list',
+      name: 'article',
+      message: 'Which article are you looking for?'
+    }
+  ];
+}
+
 async function main() {
   const articles = await search(cli.input[0]);
-  const reference = await retrieveReference(articles[1].id);
+  const questions = buildQuestions(articles);
+  const { article } = await inquirer.prompt(questions);
+  const reference = await retrieveReference(article);
   console.log(reference);
 }
 
