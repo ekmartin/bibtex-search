@@ -2,7 +2,7 @@
 
 > Command-line interface for retrieving BibTeX references
 
-![bibtex-search](https://i.imgur.com/MAx3vXx.gif)
+![bibtex-search](https://i.imgur.com/ARhwzbQ.gif)
 
 Currently uses [ACM's Digital Library](https://dl.acm.org/) to find papers, but
 might support other sources in the future.
