@@ -22,7 +22,7 @@ async function search(query) {
   const detailsSelector = selector('.details');
   return detailsSelector.toArray().map(article => {
     const articleSelector = selector(article);
-    const link = articleSelector.find('.title > a');
+    const link = articleSelector.find('.title > a[href^=citation]');
     const title = link.text();
     const authors = articleSelector
       .find('.authors > a')
