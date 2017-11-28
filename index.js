@@ -8,6 +8,7 @@ const meow = require('meow');
 const inquirer = require('inquirer');
 const ora = require('ora');
 const clipboardy = require('clipboardy');
+const chalk = require('chalk');
 
 const MAX_ARTICLES = 10;
 const ACM_SEARCH_URL = 'https://dl.acm.org/results.cfm';
@@ -65,7 +66,7 @@ const cli = meow(`
 function buildQuestions(articles) {
   const choices = articles.map(({ id, title, authors }, i) => ({
     value: id,
-    name: `${title} (${authors})`
+    name: `${title} ${chalk.dim(`(${authors})`)}`
   }));
 
   return [
