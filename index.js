@@ -93,6 +93,11 @@ async function main() {
     process.exit(1);
   }
 
+  if (!articles.length) {
+    spinner.info(`No results found for query '${query}'.`);
+    process.exit(0);
+  }
+
   const questions = buildQuestions(articles);
   const { article } = await inquirer.prompt(questions);
 
