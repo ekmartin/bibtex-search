@@ -8,6 +8,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node index.js",
+    "test": "yarn lint",
     "lint": "yarn lint:prettier && yarn lint:eslint",
     "lint:eslint": "eslint .",
     "lint:prettier": "prettier '**/*.{js,md}' --list-different",
