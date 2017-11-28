@@ -105,14 +105,10 @@ async function main() {
     process.exit(1);
   }
 
-  try {
-    clipboardy.writeSync(reference);
-    spinner.succeed('Copied to clipboard!');
-  } catch (e) {
-    // Fall back to outputting the reference if clipboardy fails:
-    spinner.succeed('Done!');
-    console.log(reference);
-  }
+  spinner.stop();
+  console.log(reference);
+  clipboardy.writeSync(reference);
+  spinner.succeed('Copied to clipboard!');
 }
 
 main();
