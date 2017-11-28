@@ -71,16 +71,27 @@ function buildQuestions(articles) {
 async function main() {
   const [query] = cli.input;
   const spinner = ora(`Searching for '${query}'`).start();
-  const articles = await search(query);
-  spinner.stop();
+  let articles;
+  try {
+    articles = await search(query);
+    spinner.stop();
+  } catch (e) {
+    spinner.fail(`Something went wrong while searching: ${e}`);
+    process.exit(1);
+  }
 
   const questions = buildQuestions(articles);
   const { article } = await inquirer.prompt(questions);
 
   spinner.start('Retrieving BibTeX reference');
-  const reference = await retrieveReference(article);
-  spinner.succeed('Done!');
-  console.log(reference);
+  try {
+    const reference = await retrieveReference(article);
+    spinner.succeed('Done!');
+    console.log(reference);
+  } catch (e) {
+    spinner.fail(`Something went wrong while retrieving reference: ${e}`);
+    process.exit(1);
+  }
 }
 
 main();
