@@ -1,0 +1,35 @@
+{
+  "name": "bibtex-search",
+  "version": "0.1.0",
+  "description": "Search for BibTeX references",
+  "main": "index.js",
+  "repository": "https://github.com/ekmartin/bibtex-search",
+  "author": "Martin Ek <mail@ekmartin.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "lint": "yarn lint:prettier && yarn lint:eslint",
+    "lint:eslint": "eslint .",
+    "lint:prettier": "prettier '**/*.{js,md}' --list-different",
+    "prettier": "prettier '**/*.{js,md}' --write"
+  },
+  "prettier": {
+    "singleQuote": true
+  },
+  "eslintConfig": {
+    "extends": ["prettier"],
+    "parserOptions": {
+      "ecmaVersion": 8
+    }
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "got": "^8.0.0",
+    "meow": "^4.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.12.0",
+    "eslint-config-prettier": "^2.9.0",
+    "prettier": "^1.8.2"
+  }
+}
