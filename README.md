@@ -4,6 +4,9 @@
 
 ![bibtex-search](https://i.imgur.com/MAx3vXx.gif)
 
+Currently uses [ACM's Digital Library](https://dl.acm.org/) to find papers, but
+might support other sources in the future.
+
 ## Installation and usage
 
 ```bash
