@@ -2,6 +2,8 @@
 
 > Command-line interface for retrieving BibTeX references
 
+![bibtex-search](https://i.imgur.com/MAx3vXx.gif)
+
 ## Installation and usage
 
 ```bash
