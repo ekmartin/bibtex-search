@@ -4,10 +4,15 @@ const cheerio = require('cheerio');
 const meow = require('meow');
 const inquirer = require('inquirer');
 const ora = require('ora');
+const clipboardy = require('clipboardy');
 
+const MAX_ARTICLES = 10;
 const ACM_SEARCH_URL = 'https://dl.acm.org/results.cfm';
 const ACM_REFERENCE_URL = 'https://dl.acm.org/exportformats.cfm';
 
+/**
+ * Searches ACM for the given query, returning an array of articles.
+ */
 async function search(query) {
   const res = await got(ACM_SEARCH_URL, { query: { query } });
   const selector = cheerio.load(res.body);
@@ -33,6 +38,9 @@ async function search(query) {
   });
 }
 
+/**
+ * Retrieves the BibTeX reference for a given ACM ID.
+ */
 async function retrieveReference(id) {
   const query = {
     id,
@@ -60,7 +68,7 @@ function buildQuestions(articles) {
   return [
     {
       choices,
-      pageSize: articles.length,
+      pageSize: Infinity,
       type: 'list',
       name: 'article',
       message: 'Which article are you looking for?'
@@ -69,11 +77,12 @@ function buildQuestions(articles) {
 }
 
 async function main() {
-  const [query] = cli.input;
+  const query = cli.input.join(' ');
   const spinner = ora(`Searching for '${query}'`).start();
   let articles;
   try {
     articles = await search(query);
+    articles = articles.slice(0, MAX_ARTICLES);
     spinner.stop();
   } catch (e) {
     spinner.fail(`Something went wrong while searching: ${e}`);
@@ -84,13 +93,21 @@ async function main() {
   const { article } = await inquirer.prompt(questions);
 
   spinner.start('Retrieving BibTeX reference');
+  let reference;
   try {
-    const reference = await retrieveReference(article);
-    spinner.succeed('Done!');
-    console.log(reference);
+    reference = await retrieveReference(article);
   } catch (e) {
     spinner.fail(`Something went wrong while retrieving reference: ${e}`);
     process.exit(1);
+  }
+
+  try {
+    clipboardy.writeSync(reference);
+    spinner.succeed('Copied to clipboard!');
+  } catch (e) {
+    // Fall back to outputting the reference if clipboardy fails:
+    spinner.succeed('Done!');
+    console.log(reference);
   }
 }
 
