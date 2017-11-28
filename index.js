@@ -81,6 +81,7 @@ function buildQuestions(articles) {
 
 async function main() {
   const query = cli.input.join(' ');
+  if (!query) cli.showHelp();
   const spinner = ora(`Searching for '${query}'`).start();
   let articles;
   try {
