@@ -9,6 +9,8 @@ might support other sources in the future.
 
 ## Installation and usage
 
+bibtex-search needs at least version 7.6 of Node.js installed.
+
 ```bash
 $ npm install --global bibtex-search
 $ bibtex-search <query>
