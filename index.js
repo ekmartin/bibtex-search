@@ -3,6 +3,7 @@ const got = require('got');
 const cheerio = require('cheerio');
 const meow = require('meow');
 const inquirer = require('inquirer');
+const ora = require('ora');
 
 const ACM_SEARCH_URL = 'https://dl.acm.org/results.cfm';
 const ACM_REFERENCE_URL = 'https://dl.acm.org/exportformats.cfm';
@@ -68,10 +69,17 @@ function buildQuestions(articles) {
 }
 
 async function main() {
-  const articles = await search(cli.input[0]);
+  const [query] = cli.input;
+  const spinner = ora(`Searching for '${query}'`).start();
+  const articles = await search(query);
+  spinner.stop();
+
   const questions = buildQuestions(articles);
   const { article } = await inquirer.prompt(questions);
+
+  spinner.start('Retrieving BibTeX reference');
   const reference = await retrieveReference(article);
+  spinner.succeed('Done!');
   console.log(reference);
 }
 
