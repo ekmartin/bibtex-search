@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+'use strict';
+
 const querystring = require('querystring');
 const got = require('got');
 const cheerio = require('cheerio');

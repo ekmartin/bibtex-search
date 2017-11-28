@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Search for BibTeX references",
   "main": "index.js",
+  "bin": "index.js",
   "repository": "https://github.com/ekmartin/bibtex-search",
   "author": "Martin Ek <mail@ekmartin.com>",
   "license": "MIT",
