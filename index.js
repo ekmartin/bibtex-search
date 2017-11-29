@@ -9,12 +9,10 @@ const inquirer = require('inquirer');
 const ora = require('ora');
 const clipboardy = require('clipboardy');
 const chalk = require('chalk');
-const hyperlinker = require('hyperlinker');
 
 const MAX_ARTICLES = 10;
-const ACM_BASE = 'https://dl.acm.org';
-const ACM_SEARCH_URL = `${ACM_BASE}/results.cfm`;
-const ACM_REFERENCE_URL = `${ACM_BASE}/exportformats.cfm`;
+const ACM_SEARCH_URL = 'https://dl.acm.org/results.cfm';
+const ACM_REFERENCE_URL = 'https://dl.acm.org/exportformats.cfm';
 
 /**
  * Searches ACM for the given query, returning an array of articles.
@@ -33,14 +31,14 @@ async function search(query) {
       .map(author => selector(author).text())
       .join(', ');
 
-    const url = link.attr('href');
-    const { id } = querystring.parse(url.split('?').pop());
-    return {
-      id,
-      title,
-      authors,
-      href: `${ACM_BASE}/${url}`
-    };
+    const { id } = querystring.parse(
+      link
+        .attr('href')
+        .split('?')
+        .pop()
+    );
+
+    return { id, title, authors };
   });
 }
 
@@ -66,14 +64,10 @@ const cli = meow(`
 `);
 
 function buildQuestions(articles) {
-  const choices = articles.map(({ id, href, title, authors }, i) => {
-    const prefix = hyperlinker(title, href);
-    const suffix = chalk.dim(`(${authors})`);
-    return {
-      value: id,
-      name: `${prefix} ${suffix}`
-    };
-  });
+  const choices = articles.map(({ id, title, authors }, i) => ({
+    value: id,
+    name: `${title} ${chalk.dim(`(${authors})`)}`
+  }));
 
   return [
     {
