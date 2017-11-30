@@ -23,7 +23,7 @@ $ npm install --global bibtex-search
 $ bibtex-search <query>
 
 Options:
-  --source, -s Where to find papers from - valid options: [google, acm]
+  --source, -s Where to find papers from (default: acm) - valid options: [acm, ieee, google]
 
 Examples:
   $ bibtex-search bayou
