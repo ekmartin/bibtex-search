@@ -4,9 +4,10 @@
 
 ![bibtex-search](https://i.imgur.com/ARhwzbQ.gif)
 
-Currently uses [ACM's Digital Library](https://dl.acm.org/) and
-[Google Scholar](https://scholar.google.com/) to find papers, but might support
-other sources in the future.
+Currently uses [ACM's Digital Library](https://dl.acm.org/),
+[Google Scholar](https://scholar.google.com/) and
+[IEEE Xplore](http://http://ieeexplore.ieee.org/) to find papers, but might
+support other sources in the future.
 
 ## Installation
 

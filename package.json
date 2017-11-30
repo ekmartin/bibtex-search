@@ -6,6 +6,7 @@
   "bin": "cli.js",
   "repository": "https://github.com/ekmartin/bibtex-search",
   "author": "Martin Ek <mail@ekmartin.com>",
+  "keywords": ["bibtex", "acm", "ieee", "google-scholar"],
   "license": "MIT",
   "scripts": {
     "start": "node cli.js",

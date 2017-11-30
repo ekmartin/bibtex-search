@@ -9,6 +9,9 @@ const inquirer = require('inquirer');
 const { retrieve, search, sources } = require('./');
 
 const MAX_ARTICLES = 10;
+const validSources = Object.keys(sources)
+  .map(s => s.toLowerCase())
+  .join(', ');
 
 const cli = meow(
   `
@@ -16,7 +19,9 @@ const cli = meow(
     $ bibtex-search <query>
 
   Options:
-    --source, -s Where to find papers from - valid options: [google, acm]
+    --source, -s Where to find papers from (default: acm) - valid options: [${
+      validSources
+    }]
 
   Examples:
     $ bibtex-search bayou
@@ -55,10 +60,6 @@ async function main() {
   const source = cli.flags.source.toUpperCase();
   if (!query) cli.showHelp();
   if (!sources[source]) {
-    const validSources = Object.keys(sources)
-      .map(s => s.toLowerCase())
-      .join(', ');
-
     const symbol = chalk.yellow('⚠');
     console.log(`${symbol} Valid sources are: ${validSources}`);
     process.exit(1);

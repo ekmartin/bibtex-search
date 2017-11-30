@@ -1,3 +1,4 @@
+'use strict';
 const test = require('ava');
 const { retrieve, search, sources } = require('./');
 
@@ -25,6 +26,15 @@ test('search() finds articles from Google Scholar', async t => {
   });
 });
 
+test('search() finds articles from IEEE', async t => {
+  const articles = await search(sources.IEEE, 'bayou');
+  articles.forEach(({ id, title, authors }) => {
+    t.is(typeof id, 'string');
+    t.is(typeof title, 'string');
+    t.is(typeof authors, 'string');
+  });
+});
+
 test('search() returns an empty array for no results from ACM', async t => {
   const articles = await search(
     sources.ACM,
@@ -37,6 +47,15 @@ test('search() returns an empty array for no results from ACM', async t => {
 test('search() returns an empty array for no results from Google Scholar', async t => {
   const articles = await search(
     sources.GOOGLE,
+    '35a33f02ce2709d03a97acbc0a73db0d'
+  );
+
+  t.deepEqual(articles, []);
+});
+
+test('search() returns an empty array for no results from IEEE', async t => {
+  const articles = await search(
+    sources.IEEE,
     '35a33f02ce2709d03a97acbc0a73db0d'
   );
 
@@ -80,5 +99,25 @@ test('retrieve() downloads references from Google Scholar', async t => {
   year={1995},
   organization={ACM}
 }`
+  );
+});
+
+test('retrieve() downloads references from IEEE', async t => {
+  const id = '8119137';
+  const reference = await retrieve(sources.IEEE, id);
+  t.is(
+    reference,
+    `@INPROCEEDINGS{8119137,
+author={Y. Cui and G. Li and H. Cheng and D. Wang},
+  booktitle={2017 IEEE 14th International Conference on e-Business Engineering (ICEBE)},
+ title={Indexing for Large Scale Data Querying Based on Spark SQL},
+  year={2017},
+  volume={},
+  number={},
+  pages={103-108},
+  keywords={Acceleration;Big Data;Indexing;Optimization;Sparks;Structured Query Language;Apache Spark;Big Data;Big Data Indexing;Searching and Querying;Spark SQL;Spark as a Service},
+  doi={10.1109/ICEBE.2017.25},
+  ISSN={},
+  month={Nov},}`
   );
 });
