@@ -1,4 +1,4 @@
-# bibtex-search [![Build Status](https://travis-ci.org/ekmartin/bibtex-search.svg?branch=master)](https://travis-ci.org/ekmartin/bibtex-search)
+# bibtex-search [![DroneCI](https://ci.abakus.no/api/badges/ekmartin/bibtex-search/status.svg?branch=master)](https://ci.abakus.no/ekmartin/bibtex-search)
 
 > Command-line interface for retrieving BibTeX references
 
