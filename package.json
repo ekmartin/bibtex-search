@@ -1,12 +1,17 @@
 {
   "name": "bibtex-search",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Search for BibTeX references",
   "main": "index.js",
   "bin": "cli.js",
   "repository": "https://github.com/ekmartin/bibtex-search",
   "author": "Martin Ek <mail@ekmartin.com>",
-  "keywords": ["bibtex", "acm", "ieee", "google-scholar"],
+  "keywords": [
+    "bibtex",
+    "acm",
+    "ieee",
+    "google-scholar"
+  ],
   "license": "MIT",
   "scripts": {
     "start": "node cli.js",
