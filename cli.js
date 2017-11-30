@@ -6,10 +6,9 @@ const ora = require('ora');
 const chalk = require('chalk');
 const clipboardy = require('clipboardy');
 const inquirer = require('inquirer');
-const { retrieve, search } = require('./');
+const { retrieve, search, sources } = require('./');
 
 const MAX_ARTICLES = 10;
-const VALID_SOURCES = ['google', 'acm'];
 
 const cli = meow(
   `
@@ -53,11 +52,15 @@ function buildQuestions(articles) {
 
 async function main() {
   const query = cli.input.join(' ');
-  const { source } = cli.flags;
+  const source = cli.flags.source.toUpperCase();
   if (!query) cli.showHelp();
-  if (!VALID_SOURCES.includes(source)) {
+  if (!sources[source]) {
+    const validSources = Object.keys(sources)
+      .map(s => s.toLowerCase())
+      .join(', ');
+
     const symbol = chalk.yellow('⚠');
-    console.log(`${symbol} Valid sources are: ${VALID_SOURCES.join(', ')}`);
+    console.log(`${symbol} Valid sources are: ${validSources}`);
     process.exit(1);
   }
 

@@ -8,6 +8,11 @@ const ACM_SEARCH_URL = 'https://dl.acm.org/results.cfm';
 const ACM_REFERENCE_URL = 'https://dl.acm.org/exportformats.cfm';
 const SCHOLAR_SEARCH_URL = 'https://scholar.google.com/scholar';
 
+const sources = {
+  ACM: 'ACM',
+  GOOGLE: 'GOOGLE'
+};
+
 async function searchAcm(query) {
   const res = await got(ACM_SEARCH_URL, { query: { query } });
   const selector = cheerio.load(res.body);
@@ -60,7 +65,9 @@ async function retrieveAcm(id) {
 
   const res = await got(ACM_REFERENCE_URL, { query });
   const selector = cheerio.load(res.body);
-  return selector(`pre[id=${id}]`).text();
+  return selector(`pre[id=${id}]`)
+    .text()
+    .trim();
 }
 
 async function retrieveScholar(id) {
@@ -73,14 +80,14 @@ async function retrieveScholar(id) {
   const selector = cheerio.load(res.body);
   const url = selector(`a.gs_citi:contains(BibTeX)`).attr('href');
   const refRes = await got(url);
-  return refRes.body;
+  return refRes.body.trim();
 }
 
 /**
  * Retrieves the BibTeX reference for a given source and id.
  */
 exports.retrieve = async function retrieve(source, id) {
-  if (source === 'google') {
+  if (source === sources.GOOGLE) {
     return retrieveScholar(id);
   }
 
@@ -91,9 +98,14 @@ exports.retrieve = async function retrieve(source, id) {
  * Searches the given source for a list of articles.
  */
 exports.search = async function search(source, query) {
-  if (source === 'google') {
+  if (source === sources.GOOGLE) {
     return searchScholar(query);
   }
 
   return searchAcm(query);
 };
+
+/**
+ * Supported paper sources.
+ */
+exports.sources = sources;
