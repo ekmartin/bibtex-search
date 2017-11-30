@@ -1,23 +1,14 @@
-#!/usr/bin/env node
 'use strict';
 
 const querystring = require('querystring');
 const got = require('got');
 const cheerio = require('cheerio');
-const meow = require('meow');
-const inquirer = require('inquirer');
-const ora = require('ora');
-const clipboardy = require('clipboardy');
-const chalk = require('chalk');
 
-const MAX_ARTICLES = 10;
 const ACM_SEARCH_URL = 'https://dl.acm.org/results.cfm';
 const ACM_REFERENCE_URL = 'https://dl.acm.org/exportformats.cfm';
+const SCHOLAR_SEARCH_URL = 'https://scholar.google.com/scholar';
 
-/**
- * Searches ACM for the given query, returning an array of articles.
- */
-async function search(query) {
+async function searchAcm(query) {
   const res = await got(ACM_SEARCH_URL, { query: { query } });
   const selector = cheerio.load(res.body);
   const detailsSelector = selector('.details');
@@ -42,10 +33,26 @@ async function search(query) {
   });
 }
 
-/**
- * Retrieves the BibTeX reference for a given ACM ID.
- */
-async function retrieveReference(id) {
+async function searchScholar(query) {
+  const res = await got(SCHOLAR_SEARCH_URL, {
+    query: {
+      q: query,
+      hl: 'en'
+    }
+  });
+
+  const selector = cheerio.load(res.body);
+  const detailsSelector = selector('.gs_r.gs_or.gs_scl');
+  return detailsSelector.toArray().map(article => {
+    const articleSelector = selector(article);
+    const id = articleSelector.data('cid');
+    const title = articleSelector.find('.gs_rt > a').text();
+    const authors = articleSelector.find('.gs_a').text();
+    return { id, title, authors };
+  });
+}
+
+async function retrieveAcm(id) {
   const query = {
     id,
     expformat: 'bibtex'
@@ -56,65 +63,37 @@ async function retrieveReference(id) {
   return selector(`pre[id=${id}]`).text();
 }
 
-const cli = meow(`
-  Searches for BibTeX references.
+async function retrieveScholar(id) {
+  const query = {
+    q: `info:${id}:scholar.google.com/`,
+    output: 'cite'
+  };
 
-  Usage:
-    $ bibtex-search <query>
-`);
-
-function buildQuestions(articles) {
-  const choices = articles.map(({ id, title, authors }, i) => ({
-    value: id,
-    name: `${title} ${chalk.dim(`(${authors})`)}`
-  }));
-
-  return [
-    {
-      choices,
-      pageSize: Infinity,
-      type: 'list',
-      name: 'article',
-      message: 'Which article are you looking for?'
-    }
-  ];
+  const res = await got(SCHOLAR_SEARCH_URL, { query });
+  const selector = cheerio.load(res.body);
+  const url = selector(`a.gs_citi:contains(BibTeX)`).attr('href');
+  const refRes = await got(url);
+  return refRes.body;
 }
 
-async function main() {
-  const query = cli.input.join(' ');
-  if (!query) cli.showHelp();
-  const spinner = ora(`Searching for '${query}'`).start();
-  let articles;
-  try {
-    articles = await search(query);
-    articles = articles.slice(0, MAX_ARTICLES);
-    spinner.stop();
-  } catch (e) {
-    spinner.fail(`Something went wrong while searching: ${e}`);
-    process.exit(1);
+/**
+ * Retrieves the BibTeX reference for a given source and id.
+ */
+exports.retrieve = async function retrieve(source, id) {
+  if (source === 'google') {
+    return retrieveScholar(id);
   }
 
-  if (!articles.length) {
-    spinner.info(`No results found for query '${query}'.`);
-    process.exit(0);
+  return retrieveAcm(id);
+};
+
+/**
+ * Searches the given source for a list of articles.
+ */
+exports.search = async function search(source, query) {
+  if (source === 'google') {
+    return searchScholar(query);
   }
 
-  const questions = buildQuestions(articles);
-  const { article } = await inquirer.prompt(questions);
-
-  spinner.start('Retrieving BibTeX reference');
-  let reference;
-  try {
-    reference = await retrieveReference(article);
-  } catch (e) {
-    spinner.fail(`Something went wrong while retrieving reference: ${e}`);
-    process.exit(1);
-  }
-
-  spinner.stop();
-  console.log(reference);
-  clipboardy.writeSync(reference);
-  spinner.succeed('Copied to clipboard!');
-}
-
-main();
+  return searchAcm(query);
+};
