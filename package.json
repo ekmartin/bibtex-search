@@ -1,6 +1,6 @@
 {
   "name": "bibtex-search",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Search for BibTeX references",
   "main": "index.js",
   "bin": "cli.js",
