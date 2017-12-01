@@ -95,8 +95,13 @@ async function main() {
 
   spinner.stop();
   console.log(reference);
-  clipboardy.writeSync(reference);
-  spinner.succeed('Copied to clipboard!');
+  try {
+    clipboardy.writeSync(reference);
+    spinner.succeed('Copied to clipboard!');
+  } catch (_e) {
+    // Ignore clipboard related errors - we've already
+    // printed the reference nonetheless.
+  }
 }
 
 main();
